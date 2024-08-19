@@ -9,7 +9,7 @@
 - [x] View Tab / Show Details
 - [x] Truncated
 - [x] Salary without decimal
-- [ ] upload profile image
+- [x] upload profile image
 - [x] Reload page, it will open same tab instead of going to first tab
 - [ ] il8n
 

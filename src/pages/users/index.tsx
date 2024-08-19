@@ -31,9 +31,9 @@ const UserListDashboard = () => {
   const renderSelectedTabView = () => {
     return (
       <div className="bg-white shadow-md rounded p-4 text-black">
+        {currentActiveTab.toLowerCase() === "view" && <UserTable />}
         {currentActiveTab.toLowerCase() === "create" && <UserCreationForm />}
         {currentActiveTab.toLowerCase() === "edit" && <EditUserForm />}
-        {currentActiveTab.toLowerCase() === "view" && <UserTable />}
       </div>
     );
   };

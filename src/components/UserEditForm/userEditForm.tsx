@@ -14,16 +14,25 @@ import { updateUser } from "@/services/user";
 export const EditUserForm = () => {
   const queryClient = useQueryClient();
   const user = useUserStore(getSelectedUserAction) as User;
-  const [editFormUser, setEditFormUser] = useState<User>(user);
   const setUpdateUser = useUserStore(updateUserAction);
   const setCurrentActiveTab = useUserStore(setCurrentActiveTabAction);
+
+  const [editFormUser, setEditFormUser] = useState<User>(user);
+  const [file, setFile] = useState<string>();
 
   const updateUserMutation = useMutation({
     mutationFn: updateUser,
     onSuccess: (data) => {
       queryClient.setQueryData(["users"], (state: any) => ({
         ...state,
-        data: state.data.map((u: User) => (u.id === data.id ? data : u)),
+        data: state.data.map((u: User) =>
+          u.id === data.id
+            ? {
+                ...data,
+                avatar: file || data.avatar,
+              }
+            : u
+        ),
       }));
       setCurrentActiveTab("View");
     },
@@ -36,10 +45,33 @@ export const EditUserForm = () => {
     });
   };
 
+  const handleFileUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+
+        reader.onload = (event) => {
+          resolve(event?.target?.result);
+        };
+
+        reader.onerror = (err) => {
+          reject(err);
+        };
+
+        reader.readAsDataURL(file);
+      }).then((base64) => {
+        setFile(base64 as string);
+      });
+    }
+  };
+
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     updateUserMutation.mutate(editFormUser);
-    setUpdateUser(editFormUser);
+    setUpdateUser({ ...editFormUser, avatar: file as string });
     setCurrentActiveTab("View");
   };
 
@@ -85,6 +117,15 @@ export const EditUserForm = () => {
             className="text-black"
             value={editFormUser.age}
             onChange={(event) => handleInputChange(event)}
+          />
+        </FormWrapper>
+        <FormWrapper className="w-1/2 mt-2 px-2" label="Upload Avatar">
+          <Input
+            type="file"
+            name="avatar"
+            className="text-black"
+            accept="image/png, image/jpeg"
+            onChange={(event) => handleFileUpload(event)}
           />
         </FormWrapper>
         <button

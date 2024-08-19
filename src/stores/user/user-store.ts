@@ -8,7 +8,7 @@ const defaultInitState: UserState = {
   users: [],
   selectedUser: undefined,
   pageInfo: {},
-  currentActiveTab: "View",
+  currentActiveTab: "view",
 };
 
 export const createUserStore = (initState: UserState = defaultInitState) => {
